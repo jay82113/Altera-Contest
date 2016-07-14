@@ -16,35 +16,23 @@ Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
 {
-    ui->setupUi(this);
     cameraTimer = new QTimer(this);
+    cap = NULL;
+    Ipl_Frame = NULL;
+    ui->setupUi(this);
 
-    face_cascade_name = "/home/jay/opencv-2.4.12/data/haarcascades/haarcascade_frontalface_alt.xml";
-    eyes_cascade_name = "/home/jay/opencv-2.4.12/data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
-
-    face_cascade.load( face_cascade_name );
-    eyes_cascade.load( eyes_cascade_name );
-
-    cap.open(0);
-    if(!cap.isOpened()){
+    cap = cvCaptureFromCAM(0);
+    if(!cap){
             cout << "can not open camera" << endl;
             return ;
         }
     else
         cout << "camera is opened" << endl;
 
-    cap.set(CV_CAP_PROP_FRAME_WIDTH, 320);
-    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
-
     frame_t = (double)cv::getTickCount();
-    cameraTimer->start(33);
+    cameraTimer->start(10);
 
     connect(cameraTimer, SIGNAL(timeout()), this, SLOT(videoCap()));
-
-
-    /*while (true) {
-        Ipl_Frame = cvQueryFrame(cap);
-    }*/
 
 
   //  while(true){
@@ -66,10 +54,8 @@ void Dialog::videoCap()
 {
     double fps;
     QString Height, Width;
-    if(cap.read(Frame)){
-        src = Mat(Frame);
-    //    src = detectAndDisplay(src);
-        srcQimg = QCV.CvMat2QImage(src);
+    Ipl_Frame = cvQueryFrame(cap);
+    srcQimg = QCV.IplImage2QImage(Ipl_Frame);
 
         frame_t = ((double)cv::getTickCount() - frame_t) / cv::getTickFrequency();
 
@@ -84,9 +70,7 @@ void Dialog::videoCap()
         ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height);
 
          ui->label->setPixmap(QPixmap::fromImage(srcQimg));
-    }
-    else
-        cout << "read error" << endl;
+
 }
 
 
@@ -128,5 +112,6 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame )
 
 Dialog::~Dialog()
 {
+    cvReleaseCapture(&cap);
     delete ui;
 }

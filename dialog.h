@@ -19,7 +19,7 @@ class Dialog : public QDialog
 
 public:
     explicit Dialog(QWidget *parent = 0);
-    cv::VideoCapture cap;
+    CvCapture* cap;
     cv::Mat Frame, src;
     IplImage* Ipl_Frame;
     QImage srcQimg;
@@ -35,8 +35,8 @@ private:
     std::string face_cascade_name;
     std::string eyes_cascade_name;
 private slots:
-    void videoCap();
     void videoShow();
+    void videoCap();
     cv::Mat detectAndDisplay( cv::Mat &frame );
 };
 
