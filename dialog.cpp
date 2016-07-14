@@ -30,7 +30,7 @@ Dialog::Dialog(QWidget *parent) :
         cout << "camera is opened" << endl;
 
     frame_t = (double)cv::getTickCount();
-    cameraTimer->start(10);
+    cameraTimer->start(33);
 
     connect(cameraTimer, SIGNAL(timeout()), this, SLOT(videoCap()));
 
