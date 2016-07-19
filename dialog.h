@@ -9,6 +9,8 @@
 #include "cxcore.h"
 #include "cv.h"
 
+using namespace cv;
+
 namespace Ui {
 class Dialog;
 }
@@ -20,9 +22,9 @@ class Dialog : public QDialog
 public:
     explicit Dialog(QWidget *parent = 0);
     cv::VideoCapture cap;
-    cv::Mat Frame, src;
+    cv::Mat Frame, src, prevgray, gray, flow, cflow, motion2color;
     IplImage* Ipl_Frame;
-    QImage srcQimg;
+    QImage srcQimg, optQimg;
     QTimer *cameraTimer;
     cv::CascadeClassifier face_cascade;
     cv::CascadeClassifier eyes_cascade;
@@ -37,6 +39,8 @@ private:
 private slots:
     void videoCap();
     void videoShow();
+    void motionToColor(Mat flow, Mat &color);
+    void makecolorwheel(vector<Scalar> &colorwheel);
     cv::Mat detectAndDisplay( cv::Mat &frame );
 };
 
