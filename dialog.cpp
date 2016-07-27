@@ -26,7 +26,7 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
     cameraTimer = new QTimer(this);
 
-    param.maxObjectSize = 400;
+   // param.maxObjectSize = 400;
     param.minObjectSize = 20;
    // param.maxTrackLifetime = 20;
    // param.minDetectionPeriod = 7;
@@ -116,15 +116,7 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
    std::vector<Rect> faces;
    Mat frame_gray;
 
-   float scale = 0.25;
-   CvSize Frame_size;
-   Frame_size.height = frame.rows * scale;
-   Frame_size.width = frame.cols * scale;
-
    cvtColor( frame, frame_gray, CV_BGR2GRAY );
-
-   cv::resize(frame_gray, frame_gray, Frame_size);
-
 
    face_detection.process(frame_gray);
    face_detection.getObjects(faces);
@@ -133,26 +125,12 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
    for( int i = 0; i < faces.size(); i++ )
     {
-      faces[i].x = faces[i].x / scale;
-      faces[i].y = faces[i].y / scale;
-      faces[i].width = faces[i].width / scale;
-      faces[i].height = faces[i].height / scale;
-      center.x = faces[i].x + faces[i].width*0.5;
-      center.y = faces[i].y + faces[i].height*0.5;
-     // Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-     // ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 0, 255, 0 ), 2, 8, 0 );
+
+      Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
+      ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 0, 255, 0 ), 2, 8, 0 );
 
 
     }
-   ui->label_3->setText("Gray Height = " +
-                        QString::number(frame_gray.rows) +
-                        "\nGray Width = " +
-                        QString::number(frame_gray.cols)+
-                        "\nCenter = (" +
-                        QString::number(center.x) +
-                        ", "+
-                        QString::number(center.y)+
-                        ")");
    return frame_gray;
 }
 
