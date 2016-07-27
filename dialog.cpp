@@ -26,7 +26,20 @@ Dialog::Dialog(QWidget *parent) :
     ui->setupUi(this);
     cameraTimer = new QTimer(this);
 
+    param.maxObjectSize = 400;
+    param.minObjectSize = 20;
+   // param.maxTrackLifetime = 20;
+   // param.minDetectionPeriod = 7;
+   // param.minNeighbors = 3;
 
+    cout << "maxObjectSize = " << param.maxObjectSize << endl;
+    cout << "minObjectSize = " << param.minObjectSize <<endl;
+    cout << "maxTrackLifetime = " << param.maxTrackLifetime << endl;
+    cout << "minDetectionPeriod = " << param.minDetectionPeriod << endl;
+    cout << "minNeighbors = " << param.minNeighbors << endl;
+    cout << "scaleFactor = " << param.scaleFactor << endl;
+
+    face_detection.setParameters(param);
 
     eyes_cascade_name = "/home/jay/opencv-2.4.12/data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
 
@@ -40,12 +53,6 @@ Dialog::Dialog(QWidget *parent) :
         return ;
     }
 
-    cout << "maxObjectSize = " << param.maxObjectSize << endl;
-    cout << "minObjectSize = " << param.minObjectSize <<endl;
-    cout << "maxTrackLifetime = " << param.maxTrackLifetime << endl;
-    cout << "minDetectionPeriod = " << param.minDetectionPeriod << endl;
-    cout << "minNeighbors = " << param.minNeighbors << endl;
-    cout << "scaleFactor = " << param.scaleFactor << endl;
 
     cap.open(0);
     if(!cap.isOpened()){
@@ -66,11 +73,16 @@ Dialog::Dialog(QWidget *parent) :
 void Dialog::videoCap()
 {
     double fps;
+  //  Mat gray_src;
+  //  QImage gray_srcQimg;
+    Point center;
 
     QString Height, Width;
     if(cap.read(Frame)){
         src = Mat(Frame);
-        src = detectAndDisplay(src);
+        detectAndDisplay(src, center);
+    //    gray_src = detectAndDisplay(src);
+    //    gray_srcQimg = QCV.CvMat2QImage(gray_src);
 
         srcQimg = QCV.CvMat2QImage(src);
 
@@ -87,6 +99,7 @@ void Dialog::videoCap()
         ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height);
 
          ui->label->setPixmap(QPixmap::fromImage(srcQimg));
+      //   ui->label_3->setPixmap(QPixmap::fromImage(gray_srcQimg));
     }
     else
         cout << "read error" << endl;
@@ -98,38 +111,49 @@ void Dialog::videoShow()
 
 }
 
-cv::Mat Dialog::detectAndDisplay( Mat &frame )
+cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 {
    std::vector<Rect> faces;
    Mat frame_gray;
 
+   float scale = 0.25;
+   CvSize Frame_size;
+   Frame_size.height = frame.rows * scale;
+   Frame_size.width = frame.cols * scale;
+
    cvtColor( frame, frame_gray, CV_BGR2GRAY );
+
+   cv::resize(frame_gray, frame_gray, Frame_size);
+
 
    face_detection.process(frame_gray);
    face_detection.getObjects(faces);
- //  equalizeHist( frame_gray, frame_gray );
-   //-- Detect faces
-  // face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(1, 1) );
+
+
 
    for( int i = 0; i < faces.size(); i++ )
     {
-      Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-      ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 0, 255, 0 ), 2, 8, 0 );
+      faces[i].x = faces[i].x / scale;
+      faces[i].y = faces[i].y / scale;
+      faces[i].width = faces[i].width / scale;
+      faces[i].height = faces[i].height / scale;
+      center.x = faces[i].x + faces[i].width*0.5;
+      center.y = faces[i].y + faces[i].height*0.5;
+     // Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
+     // ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 0, 255, 0 ), 2, 8, 0 );
 
-      /*Mat faceROI = frame_gray( faces[i] );
-      std::vector<Rect> eyes;
 
-      //-- In each face, detect eyes
-      eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CV_HAAR_SCALE_IMAGE, Size(.5, .5) );
-
-      for( int j = 0; j < eyes.size(); j++ )
-       {
-         Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 );
-         int radius = cvRound( (eyes[j].width + eyes[i].height)*0.25 );
-         circle( frame, center, radius, Scalar( 255, 0, 0 ), 3, 8, 0 );
-       }*/
     }
-   return frame;
+   ui->label_3->setText("Gray Height = " +
+                        QString::number(frame_gray.rows) +
+                        "\nGray Width = " +
+                        QString::number(frame_gray.cols)+
+                        "\nCenter = (" +
+                        QString::number(center.x) +
+                        ", "+
+                        QString::number(center.y)+
+                        ")");
+   return frame_gray;
 }
 
 

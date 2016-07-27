@@ -49,7 +49,7 @@ private:
 private slots:
     void videoCap();
     void videoShow();
-    cv::Mat detectAndDisplay( cv::Mat &frame );
+    cv::Mat detectAndDisplay( cv::Mat &frame , Point &center);
 };
 
 #endif // DIALOG_H
