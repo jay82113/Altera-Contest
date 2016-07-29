@@ -21,8 +21,8 @@ HEADERS  += dialog.h \
 
 FORMS    += dialog.ui
 
-INCLUDEPATH += /usr/local/opencv/include/opencv \
-               /usr/local/opencv/include/opencv2 \
-               /usr/local/opencv/include
+INCLUDEPATH += /usr/local/opencvARM/include/opencv \
+               /usr/local/opencvARM/include/opencv2 \
+               /usr/local/opencvARM/include
 
-LIBS += /usr/local/opencv/lib/libopencv*
+LIBS += /usr/local/opencvARM/lib/libopencv*
