@@ -9,6 +9,7 @@
 #include "opencv2/contrib/detection_based_tracker.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/video/video.hpp"
 
 #define UNKNOWN_FLOW_THRESH 1e9
 
@@ -18,6 +19,16 @@ using namespace std;
 DetectionBasedTracker::Parameters param;
 std::string face_cascade_name = "haarcascade_frontalface_alt.xml";
 DetectionBasedTracker face_detection(face_cascade_name, param);
+
+int history = 10;
+double varThreshold = 16;
+bool detectShadows = false ;
+
+bool update_bg_model = true;
+
+bool Need_to_Init = true;
+
+BackgroundSubtractorMOG pMOG2(20, 10, 0.5, false);
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -48,10 +59,10 @@ Dialog::Dialog(QWidget *parent) :
 
 
 
-    if(!face_detection.run()){
+   /* if(!face_detection.run()){
         cout << "face detection not run" << endl;
         return ;
-    }
+    }*/
 
 
     cap.open(0);
@@ -73,16 +84,16 @@ Dialog::Dialog(QWidget *parent) :
 void Dialog::videoCap()
 {
     double fps;
-  //  Mat gray_src;
-  //  QImage gray_srcQimg;
+    Mat gray_src;
+    QImage gray_srcQimg;
     Point center;
 
     QString Height, Width;
     if(cap.read(Frame)){
         src = Mat(Frame);
-        detectAndDisplay(src, center);
-    //    gray_src = detectAndDisplay(src);
-    //    gray_srcQimg = QCV.CvMat2QImage(gray_src);
+    //    detectAndDisplay(src, center);
+        gray_src = detectAndDisplay(src, center);
+        gray_srcQimg = QCV.CvMat2QImage(gray_src);
 
         srcQimg = QCV.CvMat2QImage(src);
 
@@ -99,7 +110,7 @@ void Dialog::videoCap()
         ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height);
 
          ui->label->setPixmap(QPixmap::fromImage(srcQimg));
-      //   ui->label_3->setPixmap(QPixmap::fromImage(gray_srcQimg));
+         ui->label_3->setPixmap(QPixmap::fromImage(gray_srcQimg));
     }
     else
         cout << "read error" << endl;
@@ -114,9 +125,39 @@ void Dialog::videoShow()
 cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 {
    std::vector<Rect> faces;
-   Mat frame_gray;
+   Mat frame_gray, bgimg;
+   static Rect trackWindow;
+  static Mat pev_frame;
 
-   float scale = 0.25;
+  /* if(Need_to_Init && faces.empty()){
+       cvtColor( frame, frame_gray, CV_BGR2GRAY );
+
+       face_detection.process(frame_gray);
+       face_detection.getObjects(faces);
+       face_detection.stop();
+       Need_to_Init = false;
+   }
+   else{
+
+   }*/
+
+    pMOG2(frame, frame_gray, update_bg_model ? -1 : 0);
+  /* if(Need_to_Init){
+       pev_frame = frame;
+       Need_to_Init = false;
+   }
+   else{
+       cv::absdiff(frame, pev_frame, frame_gray);
+       pev_frame = frame;
+   }*/
+
+  /* Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
+   morphologyEx(frame_gray,frame_gray, MORPH_OPEN, element);
+   morphologyEx(frame_gray,frame_gray, MORPH_CLOSE, element);*/
+
+   //pMOG2.getBackgroundImage(bgimg);
+
+ /*  float scale = 0.25;
    CvSize Frame_size;
    Frame_size.height = frame.rows * scale;
    Frame_size.width = frame.cols * scale;
@@ -124,7 +165,6 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
    cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
    cv::resize(frame_gray, frame_gray, Frame_size);
-
 
    face_detection.process(frame_gray);
    face_detection.getObjects(faces);
@@ -143,16 +183,8 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
      // ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 0, 255, 0 ), 2, 8, 0 );
 
 
-    }
-   ui->label_3->setText("Gray Height = " +
-                        QString::number(frame_gray.rows) +
-                        "\nGray Width = " +
-                        QString::number(frame_gray.cols)+
-                        "\nCenter = (" +
-                        QString::number(center.x) +
-                        ", "+
-                        QString::number(center.y)+
-                        ")");
+    }*/
+
    return frame_gray;
 }
 
