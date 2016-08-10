@@ -37,15 +37,12 @@ public:
     IplImage* Ipl_Frame;
     QImage srcQimg, optQimg;
     QTimer *cameraTimer;
-    cv::CascadeClassifier face_cascade;
-    cv::CascadeClassifier eyes_cascade;
     ConvertQtOpenCV QCV;
     double frame_t;
     ~Dialog();
 
 private:
     Ui::Dialog *ui;
-    std::string eyes_cascade_name;
 private slots:
     void videoCap();
     void videoShow();

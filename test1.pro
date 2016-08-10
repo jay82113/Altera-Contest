@@ -14,15 +14,17 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         dialog.cpp \
-    switch.cpp
+    switch.cpp \
+    face_tracker.cpp
 
 HEADERS  += dialog.h \
-    switch.h
+    switch.h \
+    face_tracker.h
 
 FORMS    += dialog.ui
 
-INCLUDEPATH += /usr/local/opencvARM/include/opencv \
-               /usr/local/opencvARM/include/opencv2 \
-               /usr/local/opencvARM/include
+INCLUDEPATH += /usr/local/opencv/include/opencv \
+               /usr/local/opencv/include/opencv2 \
+               /usr/local/opencv/include
 
-LIBS += /usr/local/opencvARM/lib/libopencv*
+LIBS += /usr/local/opencv/lib/libopencv*
