@@ -15,6 +15,7 @@
 #include "opencv2/contrib/detection_based_tracker.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
+#include "stepdetection.h"
 
 using namespace cv;
 
@@ -39,7 +40,13 @@ public:
     QTimer *cameraTimer;
     ConvertQtOpenCV QCV;
     double frame_t;
+    StepDetection step;
     ~Dialog();
+
+public slots:
+    void realtimeDataSlot(cv::Point);
+signals:
+    void FindPoint(cv::Point);
 
 private:
     Ui::Dialog *ui;

@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = test1
 TEMPLATE = app
@@ -15,11 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         dialog.cpp \
     switch.cpp \
-    face_tracker.cpp
+    face_tracker.cpp \
+    qcustomplot.cpp \
+    stepdetection.cpp
 
 HEADERS  += dialog.h \
     switch.h \
-    face_tracker.h
+    face_tracker.h \
+    qcustomplot.h \
+    stepdetection.h
 
 FORMS    += dialog.ui
 

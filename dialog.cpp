@@ -11,12 +11,35 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/video/tracking.hpp"
+#include <qpainter.h>
+#include <QFile>
+#include <QTextStream>
+#include <QTimer>
+#include <QDebug>
+#include <QVector>
+#include <numeric>
+#include "stepdetection.h"
 
 
 #define UNKNOWN_FLOW_THRESH 1e9
 
 using namespace cv;
 using namespace std;
+
+
+#define WINDOW_SIZE 31
+
+
+QString inputdate;
+QString inputtime;
+QString inputR;
+QString inputG;
+QString inputB;
+QString inputStepX;
+QString inputStepY;
+
+int num=0;
+int n=1;
 
 DetectionBasedTracker::Parameters param;
 std::string face_cascade_name = "haarcascade_mcs_nose.xml";
@@ -48,7 +71,24 @@ Dialog::Dialog(QWidget *parent) :
    // param.minDetectionPeriod = 7;
    // param.minNeighbors = 3;
 
+    ui->customPlot_1->addGraph();
+    ui->customPlot_1->graph(0)->setPen(QPen(Qt::blue));
+ // ui->customPlot_1->graph(0)->setBrush(QBrush(QColor(240,255,200)));
+    ui->customPlot_1->graph(0)->setAntialiasedFill(false);
+
+    ui->customPlot_1->addGraph();
+    ui->customPlot_1->graph(1)->setPen(QPen(Qt::blue));
+    ui->customPlot_1->graph(1)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_1->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);  //point
+
+    ui->customPlot_1->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+    ui->customPlot_1->xAxis->setDateTimeFormat("hh:mm:ss");
+    ui->customPlot_1->xAxis->setAutoTickStep(2);
+    ui->customPlot_1->axisRect()->setupFullAxesBox();
+
     face_tracker = new Face_Tracker(face_cascade_name, param);
+
+
 
     if(!face_tracker->DetectionRun()){
         cout << "face detection not run" << endl;
@@ -70,9 +110,10 @@ Dialog::Dialog(QWidget *parent) :
         cout << "camera is opened" << endl;
 
     frame_t = (double)cv::getTickCount();
-    cameraTimer->start(56);
+    cameraTimer->start(33);
 
     connect(cameraTimer, SIGNAL(timeout()), this, SLOT(videoCap()));
+    connect(this, SIGNAL(FindPoint(cv::Point)), this, SLOT(realtimeDataSlot(cv::Point)));
 
 
 }
@@ -109,13 +150,58 @@ void Dialog::videoCap()
         Height = QString::number(srcQimg.height());
         Width = QString::number(srcQimg.width());
 
-        ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height);
+        ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height + "\nCenter_X: " + QString::number(center.x) + "\nCenter_Y: "+ QString::number(center.y));
 
          ui->label->setPixmap(QPixmap::fromImage(srcQimg));
- //        ui->label_3->setPixmap(QPixmap::fromImage(gray_srcQimg));
     }
     else
         cout << "read error" << endl;
+}
+
+
+void Dialog::realtimeDataSlot(Point Center)
+{
+
+    // calculate two new data points:
+    double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    static double lastPointKey = 0;
+    if (key-lastPointKey > 0.01) // at most add point every 10 ms
+    {
+
+       double value0 = Center.y; //data
+
+    // ui->Display_Step_Cnt->setText(QString::number(step.StepCnt(value0,n)));
+
+
+    // add data to lines:
+    ui->customPlot_1->graph(0)->addData(key, value0);
+
+    // set data of dots:
+    ui->customPlot_1->graph(1)->clearData();
+    ui->customPlot_1->graph(1)->addData(key, value0);
+
+     // remove data of lines that's outside visible range:
+    ui->customPlot_1->graph(0)->removeDataBefore(key-8);
+
+    // rescale value (vertical) axis to fit the current data:
+    ui->customPlot_1->graph(0)->rescaleValueAxis();
+
+    lastPointKey = key;
+    }
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->customPlot_1->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+    ui->customPlot_1->replot();
+
+    // calculate frames per second:
+    static double lastFpsKey;
+    static int frameCount;
+    ++frameCount;
+    if (key-lastFpsKey > 2) // average fps over 2 seconds
+    {
+
+        lastFpsKey = key;
+        frameCount = 0;
+    }
 }
 
 
@@ -139,7 +225,7 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
    Mat src = Mat(frame);
 
-   size_t i, k;
+   Point point_temp;
    cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
 
@@ -147,6 +233,13 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
       needToInit = face_tracker->findFeatures(frame, points[0]);
       if(needToInit){
+
+          for(int i=0; i < points[0].size(); i++)
+              for(int j=i; j < points[0].size(); j++){
+                  if(points[0][j].x > points[0][i].x)
+                      std::swap(points[0][i], points[0][j]);
+              }
+
           for(int i=0; i < points[0].size(); i++){
                      points[0][i].x = round(points[0][i].x * scale);
                      points[0][i].y = round(points[0][i].y * scale);
@@ -179,6 +272,10 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
        ROI.y = points[1][center_num].y - 10;
        ROI.height = 20;
        ROI.width = 20;
+
+       center = points[1][center_num];
+
+       emit FindPoint(center);
 
        rectangle(frame,ROI,Scalar(0, 200, 0));
 
