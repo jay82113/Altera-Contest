@@ -17,13 +17,17 @@ SOURCES += main.cpp\
     switch.cpp \
     face_tracker.cpp \
     qcustomplot.cpp \
-    stepdetection.cpp
+    stepdetection.cpp \
+    ppgfilter.cpp \
+    iir_filter.cpp
 
 HEADERS  += dialog.h \
     switch.h \
     face_tracker.h \
     qcustomplot.h \
-    stepdetection.h
+    stepdetection.h \
+    ppgfilter.h \
+    iir_filter.h
 
 FORMS    += dialog.ui
 

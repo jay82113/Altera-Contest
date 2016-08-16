@@ -19,6 +19,7 @@
 #include <QVector>
 #include <numeric>
 #include "stepdetection.h"
+#include "ppgfilter.h"
 
 
 #define UNKNOWN_FLOW_THRESH 1e9
@@ -38,13 +39,13 @@ QString inputB;
 QString inputStepX;
 QString inputStepY;
 
+PPGFilter HRFilter;
+
 int num=0;
 int n=1;
 
 DetectionBasedTracker::Parameters param;
 std::string face_cascade_name = "haarcascade_mcs_nose.xml";
-//DetectionBasedTracker face_detection(face_cascade_name, param);
-DetectionBasedTracker* face_detection = new DetectionBasedTracker(face_cascade_name, param);
 
 Face_Tracker* face_tracker;
 
@@ -86,6 +87,21 @@ Dialog::Dialog(QWidget *parent) :
     ui->customPlot_1->xAxis->setAutoTickStep(2);
     ui->customPlot_1->axisRect()->setupFullAxesBox();
 
+    ui->customPlot_2->addGraph();
+    ui->customPlot_2->graph(0)->setPen(QPen(Qt::blue));
+ // ui->customPlot_1->graph(0)->setBrush(QBrush(QColor(240,255,200)));
+    ui->customPlot_2->graph(0)->setAntialiasedFill(false);
+
+    ui->customPlot_2->addGraph();
+    ui->customPlot_2->graph(1)->setPen(QPen(Qt::blue));
+    ui->customPlot_2->graph(1)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_2->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);  //point
+
+    ui->customPlot_2->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+    ui->customPlot_2->xAxis->setDateTimeFormat("hh:mm:ss");
+    ui->customPlot_2->xAxis->setAutoTickStep(2);
+    ui->customPlot_2->axisRect()->setupFullAxesBox();
+
     face_tracker = new Face_Tracker(face_cascade_name, param);
 
 
@@ -110,10 +126,11 @@ Dialog::Dialog(QWidget *parent) :
         cout << "camera is opened" << endl;
 
     frame_t = (double)cv::getTickCount();
-    cameraTimer->start(33);
+    cameraTimer->start(63);
 
     connect(cameraTimer, SIGNAL(timeout()), this, SLOT(videoCap()));
     connect(this, SIGNAL(FindPoint(cv::Point)), this, SLOT(realtimeDataSlot(cv::Point)));
+    connect(this, SIGNAL(FindROI(double,double,double,double)), this, SLOT(realtimePPGSlot(double,double,double,double)));
 
 
 }
@@ -137,6 +154,7 @@ void Dialog::videoCap()
   //      gray_src = detectAndDisplay(src, center);
   //      gray_srcQimg = QCV.CvMat2QImage(gray_src);
 
+        cv::resize(src, src, cv::Size(320, 240));
 
         srcQimg = QCV.CvMat2QImage(src);
 
@@ -162,6 +180,7 @@ void Dialog::videoCap()
 void Dialog::realtimeDataSlot(Point Center)
 {
 
+    static int n=1;
     // calculate two new data points:
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     static double lastPointKey = 0;
@@ -170,7 +189,7 @@ void Dialog::realtimeDataSlot(Point Center)
 
        double value0 = Center.y; //data
 
-    // ui->Display_Step_Cnt->setText(QString::number(step.StepCnt(value0,n)));
+     ui->Step_Label->setText(QString::number(step.StepCnt(value0,n)));
 
 
     // add data to lines:
@@ -202,6 +221,53 @@ void Dialog::realtimeDataSlot(Point Center)
         lastFpsKey = key;
         frameCount = 0;
     }
+
+    n++;
+}
+
+void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
+{
+    // calculate two new data points:
+    double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    static double lastPointKey = 0;
+    if (key-lastPointKey > 0.01) // at most add point every 10 ms
+    {
+
+      // double value0 =  Raw_Y.readLine().toDouble(); //data
+       double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
+
+    // ui->Display_Step_Cnt->setText(QString::number(step.StepCnt(value0,n)));
+
+
+    // add data to lines:
+    ui->customPlot_2->graph(0)->addData(key, value0);
+
+    // set data of dots:
+    ui->customPlot_2->graph(1)->clearData();
+    ui->customPlot_2->graph(1)->addData(key, value0);
+
+     // remove data of lines that's outside visible range:
+    ui->customPlot_2->graph(0)->removeDataBefore(key-8);
+
+    // rescale value (vertical) axis to fit the current data:
+    ui->customPlot_2->graph(0)->rescaleValueAxis();
+
+    lastPointKey = key;
+    }
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->customPlot_2->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
+    ui->customPlot_2->replot();
+
+    // calculate frames per second:
+    static double lastFpsKey;
+    static int frameCount;
+    ++frameCount;
+    if (key-lastFpsKey > 2) // average fps over 2 seconds
+    {
+
+        lastFpsKey = key;
+        frameCount = 0;
+    }
 }
 
 
@@ -216,10 +282,12 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
    std::vector<Rect> faces;
    Rect ROI;
    Mat frame_gray;
-   Mat Mask;
+   Mat frame_ROI;
    Mat src_resize;
    float scale = 0.2;
    CvSize Frame_size;
+
+   double Raw_B=0, Raw_G=0, Raw_R=0, Raw_Y=0;
 
    static int center_num = 2;
 
@@ -270,14 +338,47 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
        ROI.x = points[1][center_num].x - 10;
        ROI.y = points[1][center_num].y - 10;
-       ROI.height = 20;
-       ROI.width = 20;
+       ROI.height = 50;
+       ROI.width = 50;
+       int ROI_num = (int) ROI.height * ROI.width;
+
+       Vec3b temp;
+
+
+       int Yend = (int) ROI.height+ROI.y;
+       int Xend = (int) ROI.width+ROI.x;
+       int Ybegin = (int) ROI.y;
+       int Xbegin = (int) ROI.x;
+
+
+
+     //  uchar *p;
+       for(int i=Ybegin; i<Yend; i++){
+           for(int j=Xbegin; j<Xend; j++){
+               temp = frame.at<Vec3b>(i, j);
+
+               Raw_B += temp.val[0];
+               Raw_G += temp.val[1];
+               Raw_R += temp.val[2];
+
+           }
+       }
+       Raw_B = Raw_B / ROI_num;
+       Raw_G = Raw_G / ROI_num;
+       Raw_R = Raw_R / ROI_num;
+
+     //  cout << Raw_B << " " << Raw_G << " " <<Raw_R <<endl;
 
        center = points[1][center_num];
+       Raw_Y = center.y;
 
+       emit FindROI(Raw_R, Raw_G, Raw_B, Raw_Y);
        emit FindPoint(center);
 
        rectangle(frame,ROI,Scalar(0, 200, 0));
+
+
+
 
      //  for( i = k = 0; i < points[1].size(); i++ )
      //      circle( frame, points[1][i], 1, Scalar(0,255,0), -1, 8);

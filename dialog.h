@@ -45,8 +45,11 @@ public:
 
 public slots:
     void realtimeDataSlot(cv::Point);
+    void realtimePPGSlot(double, double, double, double);
+
 signals:
     void FindPoint(cv::Point);
+    void FindROI(double, double, double, double);
 
 private:
     Ui::Dialog *ui;
