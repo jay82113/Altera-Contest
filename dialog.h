@@ -18,6 +18,7 @@
 #include "stepdetection.h"
 #include "ppgfilter.h"
 #include "iir_filter.h"
+#include "ppg_detection.h"
 
 using namespace cv;
 
@@ -46,6 +47,7 @@ public:
     PPGFilter HRFilter;
     IIR_Filter Filter_x;
     IIR_Filter Filter_y;
+    PPG_Detection HR_Detection;
     ~Dialog();
 
 public slots:

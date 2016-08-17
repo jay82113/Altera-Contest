@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     stepdetection.cpp \
     ppgfilter.cpp \
-    iir_filter.cpp
+    iir_filter.cpp \
+    ppg_detection.cpp
 
 HEADERS  += dialog.h \
     switch.h \
@@ -27,7 +28,8 @@ HEADERS  += dialog.h \
     qcustomplot.h \
     stepdetection.h \
     ppgfilter.h \
-    iir_filter.h
+    iir_filter.h \
+    ppg_detection.h
 
 FORMS    += dialog.ui
 

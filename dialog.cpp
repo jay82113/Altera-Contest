@@ -223,6 +223,10 @@ void Dialog::realtimeDataSlot(Point Center)
 
 void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
 {
+    static int n=1;
+    static double FFI, HR;
+    QString FFI_str, HR_str;
+
     // calculate two new data points:
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     static double lastPointKey = 0;
@@ -230,7 +234,10 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
     {
 
        double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
-
+       HR_Detection.PPG_Cnt(value0, n, FFI, HR);
+       FFI_str = QString::number(FFI, 'f', 2);
+       HR_str = QString::number(HR, 'f', 2);
+       ui->PPG_Label->setText("FFI = " + FFI_str + "\nHeartRate = " + HR_str);
 
     // add data to lines:
     ui->customPlot_2->graph(0)->addData(key, value0);
@@ -261,6 +268,7 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
         lastFpsKey = key;
         frameCount = 0;
     }
+    n++;
 }
 
 
@@ -312,7 +320,6 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
           cv::resize(src, src_resize, Frame_size);
           face_tracker->setPrevGray(src_resize);
           face_tracker->Release();
-          cap.set(CV_CAP_PROP_AUTO_EXPOSURE, 0 );
       }
 
    }
