@@ -16,6 +16,8 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
 #include "stepdetection.h"
+#include "ppgfilter.h"
+#include "iir_filter.h"
 
 using namespace cv;
 
@@ -41,6 +43,9 @@ public:
     ConvertQtOpenCV QCV;
     double frame_t;
     StepDetection step;
+    PPGFilter HRFilter;
+    IIR_Filter Filter_x;
+    IIR_Filter Filter_y;
     ~Dialog();
 
 public slots:

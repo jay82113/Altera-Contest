@@ -47,6 +47,7 @@ private:
     int stepcntwithin2snd;
     int stepcntwithin2snd_foot;
     double stepinmeter;
+    int Gaitcount;
 
 
 

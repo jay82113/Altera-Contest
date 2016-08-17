@@ -38,6 +38,7 @@ StepDetection::StepDetection()
     stepcntwithin2snd=0;
     stepcntwithin2snd_foot=0;
     Calorie=0;
+    Gaitcount = 0;
 
 }
 
@@ -76,8 +77,9 @@ int StepDetection::StepCnt(double RawY, int n)
                    }
                    else //有兩個Peak點被偵測到了
                    {
-                       if ((CurrentPPI >= PreviousPPI*0.3 && CurrentPPI <= PreviousPPI*1.7))//要落在這個範圍內的才能當作是正常的PPI  0.3,1.7
+                       if ((CurrentPPI >= PreviousPPI*0.3 && CurrentPPI <= PreviousPPI*1.7 && PeakDetect_CurrentValue > 2))//要落在這個範圍內的才能當作是正常的PPI  0.3,1.7
                        {
+                           Gaitcount = Gaitcount + 1;
                            PPI_count = PPI_count + 1;
                            PPI[PPI_count] = CurrentPPI;
                            currentcycletime = framerate/PPI[PPI_count]; // in sec
@@ -195,7 +197,7 @@ int StepDetection::StepCnt(double RawY, int n)
           }
        }
 
-       return Footcount;
+       return Gaitcount;
 
 
 }

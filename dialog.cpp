@@ -39,7 +39,6 @@ QString inputB;
 QString inputStepX;
 QString inputStepY;
 
-PPGFilter HRFilter;
 
 int num=0;
 int n=1;
@@ -141,9 +140,6 @@ void Dialog::videoCap()
    // Mat gray_src;
    // QImage gray_srcQimg;
     Point center;
-    Mat src_resize;
-    float scale = 0.5;
-    CvSize Frame_size;
 
     QString Height, Width;
     if(cap.read(Frame)){
@@ -233,10 +229,7 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
     if (key-lastPointKey > 0.01) // at most add point every 10 ms
     {
 
-      // double value0 =  Raw_Y.readLine().toDouble(); //data
        double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
-
-    // ui->Display_Step_Cnt->setText(QString::number(step.StepCnt(value0,n)));
 
 
     // add data to lines:
@@ -286,6 +279,8 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
    Mat src_resize;
    float scale = 0.2;
    CvSize Frame_size;
+   Point Raw_center;
+   double Raw_X_temp, Raw_Y_temp, temp_X, temp_Y;
 
    double Raw_B=0, Raw_G=0, Raw_R=0, Raw_Y=0;
 
@@ -293,7 +288,6 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
    Mat src = Mat(frame);
 
-   Point point_temp;
    cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
 
@@ -318,6 +312,7 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
           cv::resize(src, src_resize, Frame_size);
           face_tracker->setPrevGray(src_resize);
           face_tracker->Release();
+          cap.set(CV_CAP_PROP_AUTO_EXPOSURE, 0 );
       }
 
    }
@@ -369,7 +364,17 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
      //  cout << Raw_B << " " << Raw_G << " " <<Raw_R <<endl;
 
-       center = points[1][center_num];
+       Raw_center = points[1][center_num];
+
+       Raw_X_temp = (double) Raw_center.x;
+       Raw_Y_temp = (double) Raw_center.y;
+
+       Filter_x.Filter(Raw_X_temp, temp_X);
+       Filter_y.Filter(Raw_Y_temp, temp_Y);
+
+       center.x = (int) temp_X;
+       center.y = (int) temp_Y;
+
        Raw_Y = center.y;
 
        emit FindROI(Raw_R, Raw_G, Raw_B, Raw_Y);
@@ -382,8 +387,6 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
      //  for( i = k = 0; i < points[1].size(); i++ )
      //      circle( frame, points[1][i], 1, Scalar(0,255,0), -1, 8);
-
-
 
    }
 
