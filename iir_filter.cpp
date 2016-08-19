@@ -1,4 +1,5 @@
 #include "iir_filter.h"
+#include <iostream>
 
 IIR_Filter::IIR_Filter()
 {
@@ -14,7 +15,7 @@ IIR_Filter::IIR_Filter()
 }
 
 
-void IIR_Filter::Filter(double &inData, double &outData)
+void IIR_Filter::Filter(double &inData, double &outData, bool test)
 {
     filter_x[0][0] = inData;
 
@@ -28,7 +29,16 @@ void IIR_Filter::Filter(double &inData, double &outData)
         filter_x[i][2]=filter_x[i][1];
         filter_x[i][1]=filter_x[i][0];
         filter_x[i+1][0] = filter_y[i][0];
+
+        if(test){
+            for(int j=0; j<3; j++){
+                    std::cout << filter_x[i][j] << " ";
+                std::cout << std::endl;
+            }
+            std::cout << std::endl;
+        }
     }
+
 
     outData = filter_x[phase+1][0];
 

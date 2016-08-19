@@ -5,7 +5,7 @@ class IIR_Filter
 {
 public:
     IIR_Filter();
-    void Filter(double &inData, double &outData);
+    void Filter(double &inData, double &outData, bool test=false);
 private:
     const int phase = 8;
     double IIR_B[9][3]={{0.4242803156,0,0},

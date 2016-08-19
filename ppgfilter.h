@@ -12,6 +12,8 @@ public:
 
 private:
 
+    double PulseSignal;
+
     IIR_Filter filter_Xs;
     IIR_Filter filter_Ys;
 
