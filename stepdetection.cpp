@@ -14,7 +14,7 @@ StepDetection::StepDetection()
     PreviousPPI = 0;
     CurrentPPI = 0;
     PeakDetect_PreviousPeak = 0;
-    framerate = 110;
+    framerate = 16;
     PeakDetect_PreviousValue = 0;
     Flag_IsStartToDetect = false;
     Threshold_TheBigest_Slope = 0;
@@ -87,7 +87,7 @@ int StepDetection::StepCnt(double RawY, int n)
                            {
                                realPeakcnt = realPeakcnt + 1;
                                cycletime[realPeakcnt] = currentcycletime;
-                               cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0))/realPeakcnt;
+                               cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0.0))/realPeakcnt;
 
                            }
                            else
@@ -99,7 +99,7 @@ int StepDetection::StepCnt(double RawY, int n)
                                           cycletime[i] = cycletime[i+1];
                                    }
                                    cycletime[10] = currentcycletime;
-                                   cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0))/10;
+                                   cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0.0))/10;
 
                                }
                            }

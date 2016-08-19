@@ -96,6 +96,11 @@ Dialog::Dialog(QWidget *parent) :
     ui->customPlot_2->graph(1)->setLineStyle(QCPGraph::lsNone);
     ui->customPlot_2->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);  //point
 
+    ui->customPlot_2->addGraph();
+    ui->customPlot_2->graph(2)->setPen(QPen(Qt::red));
+    ui->customPlot_2->graph(2)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_2->graph(2)->setScatterStyle(QCPScatterStyle::ssDisc);  //point
+
     ui->customPlot_2->xAxis->setTickLabelType(QCPAxis::ltDateTime);
     ui->customPlot_2->xAxis->setDateTimeFormat("hh:mm:ss");
     ui->customPlot_2->xAxis->setAutoTickStep(2);
@@ -226,6 +231,9 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
     static int n=1;
     static double FFI, HR;
     QString FFI_str, HR_str;
+    static QString DATA_str;
+    bool FindFoot;
+
 
     // calculate two new data points:
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
@@ -234,25 +242,33 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
     {
 
        double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
-       HR_Detection.PPG_Cnt(value0, n, FFI, HR);
+       FindFoot = HR_Detection.PPG_Cnt(value0, n, FFI, HR, DATA_str);
        FFI_str = QString::number(FFI, 'f', 2);
        HR_str = QString::number(HR, 'f', 2);
+
+
+       ui->label_3->setText(DATA_str);
        ui->PPG_Label->setText("FFI = " + FFI_str + "\nHeartRate = " + HR_str);
 
-    // add data to lines:
-    ui->customPlot_2->graph(0)->addData(key, value0);
+        // add data to lines:
+        ui->customPlot_2->graph(0)->addData(key, value0);
 
-    // set data of dots:
-    ui->customPlot_2->graph(1)->clearData();
-    ui->customPlot_2->graph(1)->addData(key, value0);
 
-     // remove data of lines that's outside visible range:
-    ui->customPlot_2->graph(0)->removeDataBefore(key-8);
+        // set data of dots:
+        ui->customPlot_2->graph(1)->clearData();
+        ui->customPlot_2->graph(1)->addData(key, value0);
+        if(FindFoot)
+            ui->customPlot_2->graph(2)->addData(key, value0);
 
-    // rescale value (vertical) axis to fit the current data:
-    ui->customPlot_2->graph(0)->rescaleValueAxis();
 
-    lastPointKey = key;
+
+         // remove data of lines that's outside visible range:
+        ui->customPlot_2->graph(0)->removeDataBefore(key-8);
+
+        // rescale value (vertical) axis to fit the current data:
+        ui->customPlot_2->graph(0)->rescaleValueAxis();
+
+        lastPointKey = key;
     }
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->customPlot_2->xAxis->setRange(key+0.25, 8, Qt::AlignRight);

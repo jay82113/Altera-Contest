@@ -6,7 +6,7 @@ class PPG_Detection
 {
 public:
     PPG_Detection();
-    void PPG_Cnt(double, int, double &PPG_FFI, double &HeartRate);
+    bool PPG_Cnt(double, int, double &PPG_FFI, double &HeartRate, QString &DATA_str);
 
 private:
     double PeakDetect_CurrentValue;
