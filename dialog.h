@@ -52,17 +52,19 @@ public:
 
 public slots:
     void realtimeDataSlot(cv::Point);
-    void realtimePPGSlot(double, double, double, double);
+    void realtimePPGSlot(double, double, double, double,  bool);
+    void videoShow(double, double, double, double,  bool);
 
 signals:
     void FindPoint(cv::Point);
-    void FindROI(double, double, double, double);
+    void FindROI(double, double, double, double, bool);
+    void Switch_fun(double, double, double, double,  bool);
 
 private:
     Ui::Dialog *ui;
 private slots:
     void videoCap();
-    void videoShow();
+
     cv::Mat detectAndDisplay( cv::Mat &frame , Point &center);
 };
 

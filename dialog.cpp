@@ -134,7 +134,8 @@ Dialog::Dialog(QWidget *parent) :
 
     connect(cameraTimer, SIGNAL(timeout()), this, SLOT(videoCap()));
     connect(this, SIGNAL(FindPoint(cv::Point)), this, SLOT(realtimeDataSlot(cv::Point)));
-    connect(this, SIGNAL(FindROI(double,double,double,double)), this, SLOT(realtimePPGSlot(double,double,double,double)));
+    connect(this, SIGNAL(FindROI(double,double,double,double,bool)), this, SLOT(realtimePPGSlot(double,double,double,double,bool)));
+    connect(this, SIGNAL(Switch_fun(double, double, double, double, bool)), this, SLOT(videoShow(double, double, double, double, bool)) );
 
 
 }
@@ -226,7 +227,7 @@ void Dialog::realtimeDataSlot(Point Center)
     n++;
 }
 
-void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
+void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY, bool Linear_interpolation)
 {
     static int n=1;
     static double FFI, HR;
@@ -235,13 +236,28 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
     bool FindFoot;
 
 
+    static bool first = true;
+    static double prev_RawR, prev_RawG, prev_RawB;
+    static double curr_RawR = RawR, curr_RawG = RawG, curr_RawB = RawB;
+
+
     // calculate two new data points:
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     static double lastPointKey = 0;
+
+    if(!first && Linear_interpolation){
+        RawR = (curr_RawR + prev_RawR) / 2.0;
+        RawG = (curr_RawG + prev_RawG) / 2.0;
+        RawB = (curr_RawB + prev_RawB) / 2.0;
+
+        key = lastPointKey + ((key-lastPointKey) / 2);
+    }
+
     if (key-lastPointKey > 0.01) // at most add point every 10 ms
     {
 
        double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
+       cout << value0 <<endl;
        FindFoot = HR_Detection.PPG_Cnt(value0, n, FFI, HR, DATA_str);
        FFI_str = QString::number(FFI, 'f', 2);
        HR_str = QString::number(HR, 'f', 2);
@@ -268,7 +284,8 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
         // rescale value (vertical) axis to fit the current data:
         ui->customPlot_2->graph(0)->rescaleValueAxis();
 
-        lastPointKey = key;
+        if(!first && Linear_interpolation)
+            lastPointKey = key;
     }
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->customPlot_2->xAxis->setRange(key+0.25, 8, Qt::AlignRight);
@@ -285,12 +302,23 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY)
         frameCount = 0;
     }
     n++;
+
+
+    if(!first && Linear_interpolation){
+
+        emit Switch_fun(curr_RawR, curr_RawG, curr_RawB, RawY, false);
+       // emit FindROI(curr_RawR, curr_RawG, curr_RawB, RawY, false);
+    }
+
+    first = false;
 }
 
 
-void Dialog::videoShow()
-{
 
+void Dialog::videoShow(double curr_RawR, double curr_RawG, double curr_RawB, double RawY, bool Linear_interpolation)
+{
+    for(int i=0;i<100;i++);
+    emit FindROI(curr_RawR, curr_RawG, curr_RawB, RawY, Linear_interpolation);
 }
 
 
@@ -400,7 +428,7 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
        Raw_Y = center.y;
 
-       emit FindROI(Raw_R, Raw_G, Raw_B, Raw_Y);
+       emit FindROI(Raw_R, Raw_G, Raw_B, Raw_Y, false);
        emit FindPoint(center);
 
        rectangle(frame,ROI,Scalar(0, 200, 0));
