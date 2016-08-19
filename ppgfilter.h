@@ -47,7 +47,7 @@ private:
     std::vector <double> B_buf;
     double buf_count;
 
-    const int buf_size = 32;
+    const int buf_size = 16;
 
 
     // Adaptive Filter Parameter
