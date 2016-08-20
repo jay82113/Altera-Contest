@@ -63,9 +63,16 @@ double PPGFilter::PPG_Filter(double RawR, double RawG, double RawB,double RawY)
          G_buf[0] = RawG;
          B_buf[0] = RawB;
 
-         double R_sum = std::accumulate(R_buf.begin(), R_buf.begin()+buf_count, 0.0);
-         double G_sum = std::accumulate(G_buf.begin(), G_buf.begin()+buf_count, 0.0);
-         double B_sum = std::accumulate(B_buf.begin(), B_buf.begin()+buf_count, 0.0);
+         double R_sum=0, G_sum=0, B_sum=0;
+         for(int i=0; i<buf_count; i++){
+             R_sum += R_buf[i];
+             G_sum += G_buf[i];
+             B_sum += B_buf[i];
+         }
+
+        // double R_sum = std::accumulate(R_buf.begin(), R_buf.begin()+buf_count, 0.0);
+        // double G_sum = std::accumulate(G_buf.begin(), G_buf.begin()+buf_count, 0.0);
+        // double B_sum = std::accumulate(B_buf.begin(), B_buf.begin()+buf_count, 0.0);
 
          double R_mean = R_sum / buf_count;
          double G_mean = G_sum / buf_count;
@@ -87,8 +94,14 @@ double PPGFilter::PPG_Filter(double RawR, double RawG, double RawB,double RawY)
          }
          Xs_buf[0] = Xsf_out; Ys_buf[0] = Ysf_out;
 
-         double Xs_sum = std::accumulate(Xs_buf.begin(), Xs_buf.begin()+buf_count, 0.0);
-         double Ys_sum = std::accumulate(Ys_buf.begin(), Ys_buf.begin()+buf_count, 0.0);
+         double Xs_sum=0, Ys_sum=0;
+         for(int i=0; i<buf_count; i++){
+             Xs_sum = Xs_buf[i];
+             Ys_sum = Ys_buf[i];
+         }
+
+        // double Xs_sum = std::accumulate(Xs_buf.begin(), Xs_buf.begin()+buf_count, 0.0);
+        // double Ys_sum = std::accumulate(Ys_buf.begin(), Ys_buf.begin()+buf_count, 0.0);
 
          double Xs_mean = Xs_sum / buf_count;
          double Ys_mean = Ys_sum / buf_count;

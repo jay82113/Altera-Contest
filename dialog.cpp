@@ -262,7 +262,7 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
     {
 
        double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
-    //   cout << Linear_interpolation << "  " << (double)(key-lastPointKey) << "  " << value0 << endl;
+       cout << Linear_interpolation << "  " << (double)(key-lastPointKey) << "  " << value0 << endl;
        FindFoot = HR_Detection.PPG_Cnt(value0, n, FFI, HR, DATA_str);
        FFI_str = QString::number(FFI, 'f', 2);
        HR_str = QString::number(HR, 'f', 2);
@@ -344,7 +344,7 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
    Mat frame_gray;
    Mat frame_ROI;
    Mat src_resize;
-   float scale = 0.2;
+   float scale = 0.25;
    CvSize Frame_size;
    Point Raw_center;
    double Raw_X_temp, Raw_Y_temp, temp_X, temp_Y;
