@@ -42,6 +42,7 @@ PPGFilter::PPGFilter()
      Ys_buf.resize(buf_size, 0.0);
 
      buf_count = 0;
+     movavgsum = 0;
 
 
 }
@@ -119,8 +120,10 @@ double PPGFilter::PPG_Filter(double RawR, double RawG, double RawB,double RawY)
             filter_Pulse.Filter(PulseSignal, IIR_PulseSignal);
          }
 
-         std::cout << IIR_PulseSignal << std::endl;
-      /*   //Moving Average
+        // std::cout << IIR_PulseSignal << std::endl;
+
+
+         //Moving Average
          if (moveavgcnt < movingwidowsize )
          {
              movingbuf[moveavgcnt]=IIR_PulseSignal;
@@ -135,13 +138,14 @@ double PPGFilter::PPG_Filter(double RawR, double RawG, double RawB,double RawY)
 
                 for(int k=0;k<movingwidowsize;k++)
                 {
-                    movavgout += movingbuf[k];
+                    movavgsum += movingbuf[k];
                 }
 
-            movavgout=movavgout/movingwidowsize;
+            movavgout=(movavgsum/movingwidowsize)*10;
             movingbuf[movingwidowsize-1] = IIR_PulseSignal;
             moveavgcnt++;
-         }*/
+            movavgsum = 0;
+         }
 
 
 
@@ -160,6 +164,6 @@ double PPGFilter::PPG_Filter(double RawR, double RawG, double RawB,double RawY)
 
 
 
-         return IIR_PulseSignal;
+         return movavgout;
 
 }

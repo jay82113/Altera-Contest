@@ -41,6 +41,7 @@ private:
     int moveavgcnt ;
     int movavgout ;
     int movingwidowsize ;
+    double movavgsum;
     std::vector <double> movingbuf;
     std::vector <double> Xs_buf;
     std::vector <double> Ys_buf;
