@@ -39,7 +39,8 @@ private:
 
     //Moving AveragCounte Parameter
     int moveavgcnt ;
-    int movavgout ;
+    double movavgout ;
+    double movavgsum ;
     int movingwidowsize ;
     std::vector <double> movingbuf;
     std::vector <double> Xs_buf;

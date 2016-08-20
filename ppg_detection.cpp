@@ -20,7 +20,7 @@ PPG_Detection::PPG_Detection()
     PreviousPPI = 0;
     CurrentPPI = 0;
     PeakDetect_PreviousPeak = 0;
-    framerate = 16;
+    framerate = 32;
     PeakDetect_PreviousValue = 0;
     Flag_IsStartToDetect = false;
     Threshold_TheBiggest_Slope = 0;
