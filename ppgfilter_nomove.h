@@ -14,9 +14,11 @@ private:
 
     IIR_Filter filter_G;
     IIR_Filter filter_R;
+    IIR_Filter filter_GRD;
 
     double IIR_G;
     double IIR_R;
+
 
 
     double GRDbase;
@@ -25,14 +27,16 @@ private:
     double filtered_PPG;
     double filtered_R;
     double GRD_out;
+    double GRD_IIR;
 
     int Count ;
 
 
     //Moving AveragCounte Parameter
     int moveavgcnt ;
-    int movavgout ;
+    double movavgout ;
     int movingwidowsize ;
+    double movavgsum;
     QVector<double> movingbuf;
 
 

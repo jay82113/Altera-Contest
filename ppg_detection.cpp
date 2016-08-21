@@ -20,7 +20,7 @@ PPG_Detection::PPG_Detection()
     PreviousPPI = 0;
     CurrentPPI = 0;
     PeakDetect_PreviousPeak = 0;
-    framerate = 26;
+    framerate = 20;
     PeakDetect_PreviousValue = 0;
     Flag_IsStartToDetect = false;
     Threshold_TheBiggest_Slope = 0;
@@ -133,24 +133,24 @@ bool PPG_Detection::PPG_Cnt(double PPG_Data, int n, double &PPG_FFI, double &Hea
                             CurrentFFI = (n-1) - PeakDetect_PreviousFoot; // 第一個Peak有問題
                             currentcycleFoottime = framerate/CurrentFFI; // in sec
                             if (CurrentFFI >= (PreviousFFI*0.6) && CurrentFFI <= (PreviousFFI*2.5)){ //要落在這個範圍內的才能當作是正常的PPI  0.3,1.7
-                                if (realFootcnt < 10){
+                                if (realFootcnt < 15){
                                     cycletimeFoot[realFootcnt++] = currentcycleFoottime;
                                     cycleFoottimeavg = (double) (std::accumulate(cycletimeFoot.begin(),cycletimeFoot.end(),0.0))/realFootcnt;
                                 }
                                 else{
                                     if (currentcycleFoottime < cycleFoottimeavg*2.5 && currentcycleFoottime > cycleFoottimeavg*0.6){
-                                        for(int i=0; i<9; i++)
+                                        for(int i=0; i<14; i++)
                                             cycletimeFoot[i] = cycletimeFoot[i+1];
 
-                                        cycletimeFoot[9] = currentcycleFoottime;
-                                        cycleFoottimeavg = (double) (std::accumulate(cycletimeFoot.begin(),cycletimeFoot.end(),0.0))/10;
+                                        cycletimeFoot[14] = currentcycleFoottime;
+                                        cycleFoottimeavg = (double) (std::accumulate(cycletimeFoot.begin(),cycletimeFoot.end(),0.0))/15;
                                         //std::cout << "********" << std::endl;
                                     }
                                 }
                             }
                             PeakDetect_PreviousFoot = n-1;
                             PPG_FFI = CurrentFFI;
-                            HeartRate = (double) cycleFoottimeavg*120;
+                            HeartRate = (double) cycleFoottimeavg*60;
                             DATA_str = "";
                             for(int i=0; i<10; i++)
                                 DATA_str = DATA_str + QString::number(cycletimeFoot[i], 'f', 3) + " ";

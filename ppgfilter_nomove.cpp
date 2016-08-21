@@ -18,8 +18,8 @@ PPGFilter_nomove::PPGFilter_nomove()
         //Moving AveragCounte Parameter
          moveavgcnt = 0;
          movavgout = 0;
-         movingwidowsize = 12;
-
+         movingwidowsize = 10;
+         movavgsum = 0;
         // Adaptive Filter Parameter
          N = 1;
          beta = 0.00001;
@@ -27,7 +27,7 @@ PPGFilter_nomove::PPGFilter_nomove()
          W = 0;
          Adaptive_Output = 0;
 
-         movingbuf.resize(12);
+         movingbuf.resize(movingwidowsize);
 }
 
 double PPGFilter_nomove::PPG_Filter(double RawR, double RawG, double RawB,double RawY)
@@ -48,10 +48,12 @@ double PPGFilter_nomove::PPG_Filter(double RawR, double RawG, double RawB,double
          filtered_R=(IIR_R/alphaRbeta_R);
          GRD_out= (filtered_PPG - filtered_R)*20;
 
+         filter_GRD.Filter(GRD_out, GRD_IIR);
+
          //Moving Average
          if (moveavgcnt < movingwidowsize )
          {
-             movingbuf[moveavgcnt]=GRD_out;
+             movingbuf[moveavgcnt]=GRD_IIR;
              moveavgcnt++;
          }
          else
@@ -60,16 +62,16 @@ double PPGFilter_nomove::PPG_Filter(double RawR, double RawG, double RawB,double
                 {
                     movingbuf[j] = movingbuf[j+1];
                 }
+                movingbuf[movingwidowsize-1] = GRD_IIR;
 
-                for(int k=0;k<12;k++)
-                {
-                    movavgout += movingbuf[k];
-                }
-
-            movavgout=movavgout/12;
-            movingbuf[movingwidowsize-1] = GRD_out;
-            moveavgcnt++;
          }
+         for(int k=0;k<movingwidowsize;k++)
+         {
+             movavgsum += movingbuf[k];
+         }
+
+         movavgout=movavgsum/moveavgcnt;
+         movavgsum = 0;
 
          //Adaptive Filter
 
@@ -77,6 +79,6 @@ double PPGFilter_nomove::PPG_Filter(double RawR, double RawG, double RawB,double
          E = movavgout - Adaptive_Output; // Desire signal
          W=W + (beta*E*RawY);
 
-         return E;
+         return movavgout;
 
 }
