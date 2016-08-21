@@ -150,7 +150,7 @@ bool PPG_Detection::PPG_Cnt(double PPG_Data, int n, double &PPG_FFI, double &Hea
                             }
                             PeakDetect_PreviousFoot = n-1;
                             PPG_FFI = CurrentFFI;
-                            HeartRate = (double) cycleFoottimeavg*60;
+                            HeartRate = (double) cycleFoottimeavg*120;
                             DATA_str = "";
                             for(int i=0; i<10; i++)
                                 DATA_str = DATA_str + QString::number(cycletimeFoot[i], 'f', 3) + " ";

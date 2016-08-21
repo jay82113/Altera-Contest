@@ -19,6 +19,7 @@
 #include "ppgfilter.h"
 #include "iir_filter.h"
 #include "ppg_detection.h"
+#include "ppgfilter_nomove.h"
 
 using namespace cv;
 
@@ -45,6 +46,7 @@ public:
     double frame_t;
     StepDetection step;
     PPGFilter HRFilter;
+    PPGFilter_nomove HR_nomoveFilter;
     IIR_Filter Filter_x;
     IIR_Filter Filter_y;
     PPG_Detection HR_Detection;

@@ -130,7 +130,7 @@ Dialog::Dialog(QWidget *parent) :
         cout << "camera is opened" << endl;
 
     frame_t = (double)cv::getTickCount();
-    cameraTimer->start(63);
+    cameraTimer->start(77);
 
     connect(cameraTimer, SIGNAL(timeout()), this, SLOT(videoCap()));
     connect(this, SIGNAL(FindPoint(cv::Point)), this, SLOT(realtimeDataSlot(cv::Point)));
@@ -261,7 +261,8 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
     if (key-lastPointKey > 0.01) // at most add point every 10 ms
     {
 
-       double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
+       //double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
+        double value0 = HR_nomoveFilter.PPG_Filter(RawR,RawG,RawB,RawY);
        cout << Linear_interpolation << "  " << (double)(key-lastPointKey) << "  " << value0 << endl;
        FindFoot = HR_Detection.PPG_Cnt(value0, n, FFI, HR, DATA_str);
        FFI_str = QString::number(FFI, 'f', 2);

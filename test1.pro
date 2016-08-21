@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     stepdetection.cpp \
     ppgfilter.cpp \
     iir_filter.cpp \
-    ppg_detection.cpp
+    ppg_detection.cpp \
+    ppgfilter_nomove.cpp
 
 HEADERS  += dialog.h \
     switch.h \
@@ -29,7 +30,8 @@ HEADERS  += dialog.h \
     stepdetection.h \
     ppgfilter.h \
     iir_filter.h \
-    ppg_detection.h
+    ppg_detection.h \
+    ppgfilter_nomove.h
 
 FORMS    += dialog.ui
 
