@@ -16,23 +16,10 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>70</y>
+     <x>70</x>
+     <y>30</y>
      <width>331</width>
      <height>251</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>340</y>
-     <width>111</width>
-     <height>111</height>
     </rect>
    </property>
    <property name="text">
@@ -42,30 +29,286 @@
   <widget class="QCustomPlot" name="customPlot_1" native="true">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>10</y>
-     <width>391</width>
-     <height>221</height>
+     <x>460</x>
+     <y>20</y>
+     <width>361</width>
+     <height>131</height>
     </rect>
    </property>
   </widget>
   <widget class="QCustomPlot" name="customPlot_2" native="true">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>260</y>
-     <width>391</width>
-     <height>221</height>
+     <x>460</x>
+     <y>160</y>
+     <width>361</width>
+     <height>121</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="Step_Label">
+  <widget class="QComboBox" name="GenderChooice">
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>140</x>
+     <y>330</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">selection-color: rgb(255, 237, 210);</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>Male</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Female</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="CalorieShow">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>490</y>
+     <width>101</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="gender">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
      <y>340</y>
-     <width>111</width>
-     <height>121</height>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Gender:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="high">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>390</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>High:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="high_2">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>440</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Weight:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="carolie">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>490</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Calorie:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="cm">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>390</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>cm</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="kg">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>440</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>kg</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="cal">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>490</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>cal</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="High">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>390</y>
+     <width>113</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="Weight">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>440</y>
+     <width>113</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+  </widget>
+  <widget class="QWidget" name="Back" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>950</width>
+     <height>751</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>480</y>
+     <width>221</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="text">
@@ -75,29 +318,73 @@
   <widget class="QLabel" name="PPG_Label">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>480</x>
      <y>340</y>
-     <width>131</width>
-     <height>121</height>
+     <width>201</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="text">
     <string>TextLabel</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>570</y>
-     <width>721</width>
-     <height>121</height>
+     <x>90</x>
+     <y>560</y>
+     <width>201</width>
+     <height>131</height>
     </rect>
    </property>
-   <property name="text">
-    <string>TextLabel</string>
+   <property name="title">
+    <string>Mode</string>
    </property>
+   <widget class="QRadioButton" name="radioNormal">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>40</y>
+      <width>100</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Normal</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioRun">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>80</y>
+      <width>100</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RunMode</string>
+    </property>
+   </widget>
   </widget>
+  <zorder>Back</zorder>
+  <zorder>kg</zorder>
+  <zorder>cal</zorder>
+  <zorder>customPlot_2</zorder>
+  <zorder>label</zorder>
+  <zorder>cm</zorder>
+  <zorder>gender</zorder>
+  <zorder>GenderChooice</zorder>
+  <zorder>high</zorder>
+  <zorder>High</zorder>
+  <zorder>customPlot_1</zorder>
+  <zorder>Weight</zorder>
+  <zorder>high_2</zorder>
+  <zorder>carolie</zorder>
+  <zorder>CalorieShow</zorder>
+  <zorder>label_2</zorder>
+  <zorder>PPG_Label</zorder>
+  <zorder>groupBox</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

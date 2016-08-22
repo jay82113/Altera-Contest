@@ -20,6 +20,7 @@
 #include <numeric>
 #include "stepdetection.h"
 #include "ppgfilter.h"
+#include <QTextEdit>
 
 
 #define UNKNOWN_FLOW_THRESH 1e9
@@ -39,7 +40,8 @@ QString inputB;
 QString inputStepX;
 QString inputStepY;
 
-
+float CalCalorie=0;
+float StepDistance=0;
 int num=0;
 int n=1;
 
@@ -64,6 +66,10 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     cameraTimer = new QTimer(this);
+
+
+
+    ui->Back->setStyleSheet("background-image:url(pic.jpg);");
 
    // param.maxObjectSize = 400;
     param.minObjectSize = 30;
@@ -136,9 +142,12 @@ Dialog::Dialog(QWidget *parent) :
     connect(this, SIGNAL(FindPoint(cv::Point)), this, SLOT(realtimeDataSlot(cv::Point)));
     connect(this, SIGNAL(FindROI(double,double,double,double,bool)), this, SLOT(realtimePPGSlot(double,double,double,double,bool)));
     connect(this, SIGNAL(Switch_fun(double, double, double, double, bool)), this, SLOT(videoShow(double, double, double, double, bool)) );
+    //connect(ui->radioRun, SIGNAL(clicked()), this, SLOT(RunMode()));
+
 
 
 }
+
 
 void Dialog::videoCap()
 {
@@ -183,15 +192,16 @@ void Dialog::realtimeDataSlot(Point Center)
 {
 
     static int n=1;
+     double value0 = Center.y; //data
     // calculate two new data points:
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     static double lastPointKey = 0;
     if (key-lastPointKey > 0.01) // at most add point every 10 ms
     {
 
-       double value0 = Center.y; //data
 
-     ui->Step_Label->setText(QString::number(step.StepCnt(value0,n)));
+
+     //ui->Step_Label->setText(QString::number(step.StepCnt(value0,n)));
 
 
     // add data to lines:
@@ -225,6 +235,22 @@ void Dialog::realtimeDataSlot(Point Center)
     }
 
     n++;
+
+
+
+
+
+        /*     int StepCount = step.StepCnt(value0,n);
+                 double High = ui->High->text().toDouble();
+                 double Weight= ui->Weight->text().toDouble();
+                 if(ui->GenderChooice->currentIndex()==0)
+                     StepDistance=StepCount*(High*0.415);
+                 else
+                     StepDistance=StepCount*(High*0.413);
+                    CalCalorie = Weight*(StepDistance/100000);
+                ui->CalorieShow->setText(QString::number(CalCalorie));*/
+
+
 }
 
 void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY, bool Linear_interpolation)
@@ -269,7 +295,7 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
        HR_str = QString::number(HR, 'f', 2);
 
 
-       ui->label_3->setText(DATA_str);
+     //  ui->label_3->setText(DATA_str);
        ui->PPG_Label->setText("FFI = " + FFI_str + "\nHeartRate = " + HR_str);
 
         // add data to lines:

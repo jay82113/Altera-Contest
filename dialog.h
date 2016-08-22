@@ -57,6 +57,7 @@ public slots:
     void realtimePPGSlot(double, double, double, double,  bool);
     void videoShow(double, double, double, double,  bool);
 
+
 signals:
     void FindPoint(cv::Point);
     void FindROI(double, double, double, double, bool);
