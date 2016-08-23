@@ -201,7 +201,7 @@ void Dialog::realtimeDataSlot(Point Center)
 
 
 
-     //ui->Step_Label->setText(QString::number(step.StepCnt(value0,n)));
+     ui->Step_Label->setText(QString::number(step.StepCnt(value0,n)));
 
 
     // add data to lines:
@@ -240,7 +240,7 @@ void Dialog::realtimeDataSlot(Point Center)
 
 
 
-        /*     int StepCount = step.StepCnt(value0,n);
+             int StepCount = step.StepCnt(value0,n);
                  double High = ui->High->text().toDouble();
                  double Weight= ui->Weight->text().toDouble();
                  if(ui->GenderChooice->currentIndex()==0)
@@ -248,7 +248,7 @@ void Dialog::realtimeDataSlot(Point Center)
                  else
                      StepDistance=StepCount*(High*0.413);
                     CalCalorie = Weight*(StepDistance/100000);
-                ui->CalorieShow->setText(QString::number(CalCalorie));*/
+                ui->CalorieShow->setText(QString::number(CalCalorie));
 
 
 }

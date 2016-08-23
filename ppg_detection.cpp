@@ -36,7 +36,7 @@ PPG_Detection::PPG_Detection()
     GaitCount = 0;
     // Foot Detection
     realFootcnt = 0;
-    cycletimeFoot.resize(10);
+    cycletimeFoot.resize(20);
     PeakDetect_PreviousFoot = 0;
     PreviousFFI = 0;
     Footfndcnt = 0;

@@ -367,6 +367,19 @@
     </property>
    </widget>
   </widget>
+  <widget class="QLabel" name="Step_Label">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>600</y>
+     <width>251</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
   <zorder>Back</zorder>
   <zorder>kg</zorder>
   <zorder>cal</zorder>
@@ -385,6 +398,7 @@
   <zorder>label_2</zorder>
   <zorder>PPG_Label</zorder>
   <zorder>groupBox</zorder>
+  <zorder>Step_Label</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
