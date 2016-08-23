@@ -24,6 +24,8 @@
 
 
 #define UNKNOWN_FLOW_THRESH 1e9
+#define NormalMode false
+#define RunMode true
 
 using namespace cv;
 using namespace std;
@@ -31,6 +33,7 @@ using namespace std;
 
 #define WINDOW_SIZE 31
 
+bool SystemMode = false;
 
 QString inputdate;
 QString inputtime;
@@ -142,12 +145,21 @@ Dialog::Dialog(QWidget *parent) :
     connect(this, SIGNAL(FindPoint(cv::Point)), this, SLOT(realtimeDataSlot(cv::Point)));
     connect(this, SIGNAL(FindROI(double,double,double,double,bool)), this, SLOT(realtimePPGSlot(double,double,double,double,bool)));
     connect(this, SIGNAL(Switch_fun(double, double, double, double, bool)), this, SLOT(videoShow(double, double, double, double, bool)) );
-    //connect(ui->radioRun, SIGNAL(clicked()), this, SLOT(RunMode()));
-
+    connect(ui->radioRun, SIGNAL(clicked()), this, SLOT(ChangeModeRun()));
+    connect(ui->radioNormal, SIGNAL(clicked()), this, SLOT(ChangeModeNormal()));
 
 
 }
 
+void Dialog::ChangeModeRun()
+{
+    SystemMode = RunMode;
+}
+
+void Dialog::ChangeModeNormal()
+{
+    SystemMode = NormalMode;
+}
 
 void Dialog::videoCap()
 {
@@ -260,6 +272,7 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
     QString FFI_str, HR_str;
     static QString DATA_str;
     bool FindFoot;
+    double value0;
 
 
     static bool first = true;
@@ -285,10 +298,12 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
     }
 
     if (key-lastPointKey > 0.01) // at most add point every 10 ms
-    {
+    {  
+        if(SystemMode == NormalMode)
+            value0 = HR_nomoveFilter.PPG_Filter(RawR,RawG,RawB,RawY);
+        else
+            value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
 
-       //double value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
-        double value0 = HR_nomoveFilter.PPG_Filter(RawR,RawG,RawB,RawY);
        cout << Linear_interpolation << "  " << (double)(key-lastPointKey) << "  " << value0 << endl;
        FindFoot = HR_Detection.PPG_Cnt(value0, n, FFI, HR, DATA_str);
        FFI_str = QString::number(FFI, 'f', 2);
@@ -400,6 +415,7 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
                      points[0][i].x = round(points[0][i].x * scale);
                      points[0][i].y = round(points[0][i].y * scale);
                  }
+
           face_tracker->setPrevPoint(points[0]);
           Frame_size.height = src.rows * scale;
           Frame_size.width = src.cols * scale;
