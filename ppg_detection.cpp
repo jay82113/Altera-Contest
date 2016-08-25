@@ -74,7 +74,7 @@ bool PPG_Detection::PPG_Cnt(double PPG_Data, int n, double &PPG_FFI, double &Hea
                         GaitCount = GaitCount + 1; //步數
                         if (realPeakcnt < 10){
                             cycletime[realPeakcnt++] = currentcycletime;
-                            cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0))/realPeakcnt;
+                            cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0.0))/realPeakcnt;
                         }
                         else{
                             if (currentcycletime < cycletimeavg*1.5 && currentcycletime > cycletimeavg*0.6){
@@ -82,7 +82,7 @@ bool PPG_Detection::PPG_Cnt(double PPG_Data, int n, double &PPG_FFI, double &Hea
                                        cycletime[i] = cycletime[i+1];
 
                                 cycletime[9] = currentcycletime;
-                                cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0))/10;
+                                cycletimeavg = (std::accumulate(cycletime.begin(),cycletime.end(),0.0))/10;
                             }
                         }
                     }

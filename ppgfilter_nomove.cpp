@@ -1,5 +1,5 @@
 #include "ppgfilter_nomove.h"
-#include "qmath.h"
+#include "cmath"
 #include "iir_filter.h"
 
 PPGFilter_nomove::PPGFilter_nomove()
@@ -18,7 +18,7 @@ PPGFilter_nomove::PPGFilter_nomove()
         //Moving AveragCounte Parameter
          moveavgcnt = 0;
          movavgout = 0;
-         movingwidowsize = 10;
+         movingwidowsize = 6;
          movavgsum = 0;
         // Adaptive Filter Parameter
          N = 1;
@@ -35,7 +35,7 @@ double PPGFilter_nomove::PPG_Filter(double RawR, double RawG, double RawB,double
     // Moving Average
          // GRD Parameter
 
-         GRDbase = qSqrt((RawR*RawR)+(RawG*RawG)+(RawB*RawB));
+         GRDbase = sqrt((RawR*RawR)+(RawG*RawG)+(RawB*RawB));
          alphaGbetaG = RawG / GRDbase;
          alphaRbeta_R = RawR / GRDbase;
 
@@ -65,7 +65,7 @@ double PPGFilter_nomove::PPG_Filter(double RawR, double RawG, double RawB,double
                 movingbuf[movingwidowsize-1] = GRD_IIR;
 
          }
-         for(int k=0;k<movingwidowsize;k++)
+         for(int k=0;k<moveavgcnt;k++)
          {
              movavgsum += movingbuf[k];
          }

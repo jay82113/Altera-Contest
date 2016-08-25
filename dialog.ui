@@ -81,23 +81,23 @@
   <widget class="QLabel" name="CalorieShow">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>570</y>
+     <x>810</x>
+     <y>530</y>
      <width>101</width>
-     <height>16</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Purisa</family>
-     <pointsize>12</pointsize>
+     <pointsize>18</pointsize>
      <weight>75</weight>
      <italic>true</italic>
      <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string>0</string>
    </property>
   </widget>
   <widget class="QLabel" name="gender">
@@ -169,16 +169,16 @@
   <widget class="QLabel" name="carolie">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>570</y>
-     <width>71</width>
-     <height>21</height>
+     <x>620</x>
+     <y>525</y>
+     <width>121</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Purisa</family>
-     <pointsize>12</pointsize>
+     <pointsize>16</pointsize>
      <weight>75</weight>
      <italic>true</italic>
      <bold>true</bold>
@@ -232,28 +232,6 @@
     <string>kg</string>
    </property>
   </widget>
-  <widget class="QLabel" name="cal">
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>570</y>
-     <width>71</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Purisa</family>
-     <pointsize>12</pointsize>
-     <weight>75</weight>
-     <italic>true</italic>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>cal</string>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="High">
    <property name="geometry">
     <rect>
@@ -301,11 +279,7 @@
      <height>751</height>
     </rect>
    </property>
-   <zorder>PPG_Label</zorder>
-   <zorder>PPG_Label</zorder>
-   <zorder>label_2</zorder>
-   <zorder>Step_Label</zorder>
-   <zorder>radioRun</zorder>
+   <zorder>label</zorder>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
@@ -336,7 +310,7 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>530</x>
+     <x>380</x>
      <y>420</y>
      <width>201</width>
      <height>131</height>
@@ -347,6 +321,13 @@
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}</string>
    </property>
    <property name="title">
     <string>Mode</string>
@@ -403,9 +384,109 @@
     <string>TextLabel</string>
    </property>
   </widget>
+  <widget class="QLabel" name="stepcntLabel">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>410</y>
+     <width>181</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;Step Count:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="heartrateLabel">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>470</y>
+     <width>151</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;Pulse Rate:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="Stepcnt">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>420</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="InitBtn">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>560</y>
+     <width>80</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Initial</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="Heartrate">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>470</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Purisa</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
   <zorder>Back</zorder>
   <zorder>kg</zorder>
-  <zorder>cal</zorder>
   <zorder>customPlot_2</zorder>
   <zorder>label</zorder>
   <zorder>cm</zorder>
@@ -422,6 +503,11 @@
   <zorder>PPG_Label</zorder>
   <zorder>groupBox</zorder>
   <zorder>Step_Label</zorder>
+  <zorder>stepcntLabel</zorder>
+  <zorder>heartrateLabel</zorder>
+  <zorder>Stepcnt</zorder>
+  <zorder>InitBtn</zorder>
+  <zorder>Heartrate</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

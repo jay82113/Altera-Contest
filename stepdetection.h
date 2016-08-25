@@ -8,7 +8,7 @@ class StepDetection
 
 public:
     StepDetection();
-    int StepCnt(double,int);
+    bool StepCnt(double, int, int &);
 
 
 private:
@@ -48,6 +48,8 @@ private:
     int stepcntwithin2snd_foot;
     double stepinmeter;
     int Gaitcount;
+    double PeakValue;
+    int PeakTime;
 
 
 

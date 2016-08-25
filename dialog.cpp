@@ -72,14 +72,15 @@ Dialog::Dialog(QWidget *parent) :
 
 
 
-    ui->Back->setStyleSheet("background-image:url(pic.jpg);");
+    ui->Back->setStyleSheet("background-image:url(iRunner_pic.jpg);");
 
    // param.maxObjectSize = 400;
     param.minObjectSize = 30;
    // param.maxTrackLifetime = 20;
    // param.minDetectionPeriod = 7;
    // param.minNeighbors = 3;
-
+    ui->customPlot_1->plotLayout()->insertRow(0);
+    ui->customPlot_1->plotLayout()->addElement(0,0,new QCPPlotTitle(ui->customPlot_1, "Step Signal"));
     ui->customPlot_1->addGraph();
     ui->customPlot_1->graph(0)->setPen(QPen(Qt::blue));
  // ui->customPlot_1->graph(0)->setBrush(QBrush(QColor(240,255,200)));
@@ -90,11 +91,18 @@ Dialog::Dialog(QWidget *parent) :
     ui->customPlot_1->graph(1)->setLineStyle(QCPGraph::lsNone);
     ui->customPlot_1->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);  //point
 
+    ui->customPlot_1->addGraph();
+    ui->customPlot_1->graph(2)->setPen(QPen(Qt::red));
+    ui->customPlot_1->graph(2)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_1->graph(2)->setScatterStyle(QCPScatterStyle::ssDisc);  //point
+
     ui->customPlot_1->xAxis->setTickLabelType(QCPAxis::ltDateTime);
     ui->customPlot_1->xAxis->setDateTimeFormat("hh:mm:ss");
     ui->customPlot_1->xAxis->setAutoTickStep(2);
     ui->customPlot_1->axisRect()->setupFullAxesBox();
 
+    ui->customPlot_2->plotLayout()->insertRow(0);
+    ui->customPlot_2->plotLayout()->addElement(0,0,new QCPPlotTitle(ui->customPlot_2, "PPG Signal"));
     ui->customPlot_2->addGraph();
     ui->customPlot_2->graph(0)->setPen(QPen(Qt::blue));
  // ui->customPlot_1->graph(0)->setBrush(QBrush(QColor(240,255,200)));
@@ -147,6 +155,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(this, SIGNAL(Switch_fun(double, double, double, double, bool)), this, SLOT(videoShow(double, double, double, double, bool)) );
     connect(ui->radioRun, SIGNAL(clicked()), this, SLOT(ChangeModeRun()));
     connect(ui->radioNormal, SIGNAL(clicked()), this, SLOT(ChangeModeNormal()));
+    connect(ui->InitBtn, SIGNAL(clicked()), this, SLOT(FaceDetectionInit()));
 
 
 }
@@ -159,6 +168,12 @@ void Dialog::ChangeModeRun()
 void Dialog::ChangeModeNormal()
 {
     SystemMode = NormalMode;
+}
+
+void Dialog::FaceDetectionInit()
+{
+    face_tracker->DetectionRun();
+    needToInit = false;
 }
 
 void Dialog::videoCap()
@@ -202,8 +217,9 @@ void Dialog::videoCap()
 
 void Dialog::realtimeDataSlot(Point Center)
 {
-
+    bool FindPeak;
     static int n=1;
+    int StepCount;
      double value0 = Center.y; //data
     // calculate two new data points:
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
@@ -211,9 +227,13 @@ void Dialog::realtimeDataSlot(Point Center)
     if (key-lastPointKey > 0.01) // at most add point every 10 ms
     {
 
-
-
-     ui->Step_Label->setText(QString::number(step.StepCnt(value0,n)));
+     QFont Step_FT;
+     Step_FT = ui->Stepcnt->font();
+     Step_FT.setPixelSize(26);
+     FindPeak = step.StepCnt(value0,n,StepCount);
+     ui->Step_Label->setText(QString::number(StepCount));
+     ui->Stepcnt->setText(QString::number(StepCount));
+    // ui->Stepcnt->setFont(Step_FT);
 
 
     // add data to lines:
@@ -222,6 +242,8 @@ void Dialog::realtimeDataSlot(Point Center)
     // set data of dots:
     ui->customPlot_1->graph(1)->clearData();
     ui->customPlot_1->graph(1)->addData(key, value0);
+    if(FindPeak)
+        ui->customPlot_1->graph(2)->addData(key, value0);
 
      // remove data of lines that's outside visible range:
     ui->customPlot_1->graph(0)->removeDataBefore(key-8);
@@ -248,11 +270,6 @@ void Dialog::realtimeDataSlot(Point Center)
 
     n++;
 
-
-
-
-
-             int StepCount = step.StepCnt(value0,n);
                  double High = ui->High->text().toDouble();
                  double Weight= ui->Weight->text().toDouble();
                  if(ui->GenderChooice->currentIndex()==0)
@@ -260,7 +277,7 @@ void Dialog::realtimeDataSlot(Point Center)
                  else
                      StepDistance=StepCount*(High*0.413);
                     CalCalorie = Weight*(StepDistance/100000);
-                ui->CalorieShow->setText(QString::number(CalCalorie));
+                ui->CalorieShow->setText(QString::number(CalCalorie) + " kcal");
 
 
 }
@@ -303,15 +320,15 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
             value0 = HR_nomoveFilter.PPG_Filter(RawR,RawG,RawB,RawY);
         else
             value0 = HRFilter.PPG_Filter(RawR,RawG,RawB,RawY);
-
-       cout << Linear_interpolation << "  " << (double)(key-lastPointKey) << "  " << value0 << endl;
+      // cout << Linear_interpolation << "  " << (double)(key-lastPointKey) << "  " << value0 << endl;
        FindFoot = HR_Detection.PPG_Cnt(value0, n, FFI, HR, DATA_str);
        FFI_str = QString::number(FFI, 'f', 2);
-       HR_str = QString::number(HR, 'f', 2);
+       HR_str = QString::number(round(HR));
 
 
      //  ui->label_3->setText(DATA_str);
        ui->PPG_Label->setText("FFI = " + FFI_str + "\nHeartRate = " + HR_str);
+       ui->Heartrate->setText(HR_str + " bpm");
 
         // add data to lines:
         ui->customPlot_2->graph(0)->addData(key, value0);
@@ -393,7 +410,7 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
    double Raw_B=0, Raw_G=0, Raw_R=0, Raw_Y=0;
 
-   static int center_num = 2;
+   static int center_num = 0;
 
    Mat src = Mat(frame);
 
@@ -405,11 +422,11 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
       needToInit = face_tracker->findFeatures(frame, points[0]);
       if(needToInit){
 
-          for(int i=0; i < points[0].size(); i++)
+        /*  for(int i=0; i < points[0].size(); i++)
               for(int j=i; j < points[0].size(); j++){
                   if(points[0][j].x > points[0][i].x)
                       std::swap(points[0][i], points[0][j]);
-              }
+              }*/
 
           for(int i=0; i < points[0].size(); i++){
                      points[0][i].x = round(points[0][i].x * scale);
@@ -440,10 +457,10 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
                   points[1][i].y = round(points[1][i].y / scale);
               }
 
-       ROI.x = points[1][center_num].x - 10;
-       ROI.y = points[1][center_num].y - 10;
-       ROI.height = 60;
-       ROI.width = 40;
+       ROI.x = points[1][center_num].x-70;
+       ROI.y = points[1][center_num].y-15;
+       ROI.height = 40;
+       ROI.width = 140;
        int ROI_num = (int) ROI.height * ROI.width;
 
        Vec3b temp;

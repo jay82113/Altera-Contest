@@ -58,6 +58,7 @@ public slots:
     void videoShow(double, double, double, double,  bool);
     void ChangeModeRun();
     void ChangeModeNormal();
+    void FaceDetectionInit();
 
 signals:
     void FindPoint(cv::Point);

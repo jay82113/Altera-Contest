@@ -35,7 +35,11 @@ bool Face_Tracker:: findFeatures(cv::Mat &frame, std::vector<cv::Point2f> &point
         Rect MaskRect(faces[0].x+65, faces[0].y, faces[0].width/2, faces[0].height/3);
         rectangle(Mask,MaskRect,Scalar(255, 255, 255),-1);
 
-        goodFeaturesToTrack(frame_gray, point, MAX_COUNT, 0.01, 10, Mask, 3, 0, 0.04);
+        point.resize(1);
+        point[0].x = faces[0].x + (faces[0].width/2);
+        point[0].y = faces[0].y + (faces[0].height/2);
+
+       // goodFeaturesToTrack(frame_gray, point, MAX_COUNT, 0.01, 10, Mask, 3, 0, 0.04);
         prevPoint.assign(point.begin(), point.end());
         frame_gray.copyTo(prevGray);
         return true;
@@ -81,7 +85,7 @@ void Face_Tracker::setPrevGray(cv::Mat &frame)
 void Face_Tracker:: Release()
 {
     face_detection->stop();
-    delete face_detection;
+    //delete face_detection;
 }
 
 void Face_Tracker:: setMAX_COUNT(int num)
