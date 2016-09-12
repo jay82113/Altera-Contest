@@ -44,6 +44,11 @@ StepDetection::StepDetection()
 
 }
 
+void StepDetection::StepCntInit()
+{
+    Gaitcount = 0;
+}
+
 bool StepDetection::StepCnt(double RawY, int n, int &StepCount)
 {
        bool FindPeak = false;

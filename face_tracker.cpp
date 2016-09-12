@@ -32,7 +32,7 @@ bool Face_Tracker:: findFeatures(cv::Mat &frame, std::vector<cv::Point2f> &point
 
     if(!faces.empty()){
         Mask = Mat::zeros(frame.rows, frame.cols, CV_8UC1);
-        Rect MaskRect(faces[0].x+65, faces[0].y, faces[0].width/2, faces[0].height/3);
+        Rect MaskRect(faces[0].x, faces[0].y, faces[0].width/2, faces[0].height/3);
         rectangle(Mask,MaskRect,Scalar(255, 255, 255),-1);
 
         point.resize(1);

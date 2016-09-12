@@ -34,6 +34,7 @@ using namespace std;
 #define WINDOW_SIZE 31
 
 bool SystemMode = false;
+bool IsRecordNow = false;
 
 QString inputdate;
 QString inputtime;
@@ -69,8 +70,9 @@ Dialog::Dialog(QWidget *parent) :
 {
     ui->setupUi(this);
     cameraTimer = new QTimer(this);
+    RecordTime = new QTimer(this);
 
-
+    ui->Record_Start_btn->setVisible(false);
 
     ui->Back->setStyleSheet("background-image:url(iRunner_pic.jpg);");
 
@@ -156,8 +158,44 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->radioRun, SIGNAL(clicked()), this, SLOT(ChangeModeRun()));
     connect(ui->radioNormal, SIGNAL(clicked()), this, SLOT(ChangeModeNormal()));
     connect(ui->InitBtn, SIGNAL(clicked()), this, SLOT(FaceDetectionInit()));
+    connect(ui->Record_btn, SIGNAL(clicked()), this, SLOT(RecordMode()));
+    connect(ui->Record_Start_btn, SIGNAL(clicked()), this, SLOT(RecordFun()));
+    connect(RecordTime, SIGNAL(timeout()), this, SLOT(RecordDataFun()));
 
 
+}
+
+void Dialog::RecordMode()
+{
+    ui->Record_Start_btn->setVisible(true);
+    ui->Record_Start_btn->setText("Start");
+    RecordFile = new QFile("RecordData/" + QDate::currentDate().toString("yyyy_MM_dd") + "_" +QTime::currentTime().toString("hh_mm_ss_zzz")+".txt");
+    if(!RecordFile->open(QFile::WriteOnly))
+        cout << "File can not open" << endl;
+    RecordStream = new QTextStream(RecordFile);
+}
+
+void Dialog::RecordFun()
+{
+    if(!IsRecordNow){
+        RecordTime->start(1000);
+        IsRecordNow = true;
+        ui->Record_Start_btn->setText("Stop");
+    }
+    else{
+        RecordTime->stop();
+        RecordFile->close();
+        ui->Record_Start_btn->setVisible(false);
+        IsRecordNow = false;
+    }
+}
+
+void Dialog::RecordDataFun()
+{
+    QString Pulse_str;
+    Pulse_str = ui->Heartrate->text();
+    if(IsRecordNow)
+        *RecordStream << Pulse_str << "\n";
 }
 
 void Dialog::ChangeModeRun()
@@ -172,6 +210,7 @@ void Dialog::ChangeModeNormal()
 
 void Dialog::FaceDetectionInit()
 {
+    step.StepCntInit();
     face_tracker->DetectionRun();
     needToInit = false;
 }
@@ -202,11 +241,11 @@ void Dialog::videoCap()
 
         frame_t = (double)cv::getTickCount();
 
-        ui->label_2->setNum(fps);
-        Height = QString::number(srcQimg.height());
-        Width = QString::number(srcQimg.width());
+        //ui->label_2->setNum(fps);
+       // Height = QString::number(srcQimg.height());
+       // Width = QString::number(srcQimg.width());
 
-        ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height + "\nCenter_X: " + QString::number(center.x) + "\nCenter_Y: "+ QString::number(center.y));
+       // ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height + "\nCenter_X: " + QString::number(center.x) + "\nCenter_Y: "+ QString::number(center.y));
 
          ui->label->setPixmap(QPixmap::fromImage(srcQimg));
     }
@@ -231,7 +270,7 @@ void Dialog::realtimeDataSlot(Point Center)
      Step_FT = ui->Stepcnt->font();
      Step_FT.setPixelSize(26);
      FindPeak = step.StepCnt(value0,n,StepCount);
-     ui->Step_Label->setText(QString::number(StepCount));
+     //ui->Step_Label->setText(QString::number(StepCount));
      ui->Stepcnt->setText(QString::number(StepCount));
     // ui->Stepcnt->setFont(Step_FT);
 
@@ -325,9 +364,8 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
        FFI_str = QString::number(FFI, 'f', 2);
        HR_str = QString::number(round(HR));
 
-
      //  ui->label_3->setText(DATA_str);
-       ui->PPG_Label->setText("FFI = " + FFI_str + "\nHeartRate = " + HR_str);
+       //ui->PPG_Label->setText("FFI = " + FFI_str + "\nHeartRate = " + HR_str);
        ui->Heartrate->setText(HR_str + " bpm");
 
         // add data to lines:
@@ -510,9 +548,9 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
 
 
-
-     //  for( i = k = 0; i < points[1].size(); i++ )
-     //      circle( frame, points[1][i], 1, Scalar(0,255,0), -1, 8);
+     /*  int i, k;
+       for( i = k = 0; i < points[1].size(); i++ )
+           circle( frame, points[1][i], 1, Scalar(0,255,0), -1, 8);*/
 
    }
 

@@ -20,6 +20,8 @@
 #include "iir_filter.h"
 #include "ppg_detection.h"
 #include "ppgfilter_nomove.h"
+#include <QFile>
+#include <QTextStream>
 
 using namespace cv;
 
@@ -50,6 +52,9 @@ public:
     IIR_Filter Filter_x;
     IIR_Filter Filter_y;
     PPG_Detection HR_Detection;
+    QFile* RecordFile;
+    QTextStream* RecordStream;
+    QTimer *RecordTime;
     ~Dialog();
 
 public slots:
@@ -59,6 +64,9 @@ public slots:
     void ChangeModeRun();
     void ChangeModeNormal();
     void FaceDetectionInit();
+    void RecordMode();
+    void RecordFun();
+    void RecordDataFun();
 
 signals:
     void FindPoint(cv::Point);

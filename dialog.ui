@@ -281,32 +281,6 @@
    </property>
    <zorder>label</zorder>
   </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>640</y>
-     <width>221</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="PPG_Label">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>640</y>
-     <width>201</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
@@ -370,19 +344,6 @@
      <string>RunMode</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QLabel" name="Step_Label">
-   <property name="geometry">
-    <rect>
-     <x>670</x>
-     <y>650</y>
-     <width>251</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
   </widget>
   <widget class="QLabel" name="stepcntLabel">
    <property name="geometry">
@@ -485,6 +446,32 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="Record_btn">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>630</y>
+     <width>80</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Record</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="Record_Start_btn">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>630</y>
+     <width>80</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </widget>
   <zorder>Back</zorder>
   <zorder>kg</zorder>
   <zorder>customPlot_2</zorder>
@@ -499,15 +486,14 @@
   <zorder>high_2</zorder>
   <zorder>carolie</zorder>
   <zorder>CalorieShow</zorder>
-  <zorder>label_2</zorder>
-  <zorder>PPG_Label</zorder>
   <zorder>groupBox</zorder>
-  <zorder>Step_Label</zorder>
   <zorder>stepcntLabel</zorder>
   <zorder>heartrateLabel</zorder>
   <zorder>Stepcnt</zorder>
   <zorder>InitBtn</zorder>
   <zorder>Heartrate</zorder>
+  <zorder>Record_btn</zorder>
+  <zorder>Record_Start_btn</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

@@ -9,6 +9,7 @@ class StepDetection
 public:
     StepDetection();
     bool StepCnt(double, int, int &);
+    void StepCntInit();
 
 
 private:
