@@ -56,6 +56,7 @@ public:
     QTextStream* RecordStream;
     QTimer *RecordTime;
     ~Dialog();
+    void RecordDataFun();
 
 public slots:
     void realtimeDataSlot(cv::Point);
@@ -66,7 +67,7 @@ public slots:
     void FaceDetectionInit();
     void RecordMode();
     void RecordFun();
-    void RecordDataFun();
+  //  void RecordDataFun();
 
 signals:
     void FindPoint(cv::Point);
@@ -75,6 +76,7 @@ signals:
 
 private:
     Ui::Dialog *ui;
+
 private slots:
     void videoCap();
 

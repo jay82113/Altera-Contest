@@ -64,6 +64,8 @@ TermCriteria *termcrit = new TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 20, 
     bool nightMode = false;
     Mat prevGray;
 
+    double start_t, PPG_t, Step_t;
+
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog)
@@ -160,7 +162,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->InitBtn, SIGNAL(clicked()), this, SLOT(FaceDetectionInit()));
     connect(ui->Record_btn, SIGNAL(clicked()), this, SLOT(RecordMode()));
     connect(ui->Record_Start_btn, SIGNAL(clicked()), this, SLOT(RecordFun()));
-    connect(RecordTime, SIGNAL(timeout()), this, SLOT(RecordDataFun()));
+   // connect(RecordTime, SIGNAL(timeout()), this, SLOT(RecordDataFun()));
 
 
 }
@@ -192,10 +194,10 @@ void Dialog::RecordFun()
 
 void Dialog::RecordDataFun()
 {
-    QString Pulse_str;
-    Pulse_str = ui->Heartrate->text();
+   // QString Pulse_str;
+   // Pulse_str = ui->Heartrate->text();
     if(IsRecordNow)
-        *RecordStream << Pulse_str << "\n";
+        *RecordStream << PPG_t << " " << Step_t << "\n";
 }
 
 void Dialog::ChangeModeRun()
@@ -242,7 +244,7 @@ void Dialog::videoCap()
         frame_t = (double)cv::getTickCount();
 
         //ui->label_2->setNum(fps);
-       // Height = QString::number(srcQimg.height());
+       // Height = QString::number(srccQimg.height());
        // Width = QString::number(srcQimg.width());
 
        // ui->label_2->setText(ui->label_2->text() + "\nWidth: " + Width + "\nHeight: " + Height + "\nCenter_X: " + QString::number(center.x) + "\nCenter_Y: "+ QString::number(center.y));
@@ -317,6 +319,8 @@ void Dialog::realtimeDataSlot(Point Center)
                      StepDistance=StepCount*(High*0.413);
                     CalCalorie = Weight*(StepDistance/100000);
                 ui->CalorieShow->setText(QString::number(CalCalorie) + " kcal");
+
+                Step_t = ((double)cv::getTickCount() - start_t) / cv::getTickFrequency();
 
 
 }
@@ -420,6 +424,11 @@ void Dialog::realtimePPGSlot(double RawR, double RawG, double RawB, double RawY,
 
         emit Switch_fun(curr_RawR, curr_RawG, curr_RawB, RawY, false);
         //emit FindROI(curr_RawR, curr_RawG, curr_RawB, RawY, false);
+    }
+
+    if(!Linear_interpolation){
+        PPG_t = ((double)cv::getTickCount() - start_t) / cv::getTickFrequency();
+        ui->test_label->setNum(PPG_t);
     }
 
     first = false;
@@ -541,6 +550,8 @@ cv::Mat Dialog::detectAndDisplay( Mat &frame, Point &center )
 
        Raw_Y = center.y;
 
+       RecordDataFun();
+       start_t = (double)cv::getTickCount();
        emit FindROI(Raw_R, Raw_G, Raw_B, Raw_Y, true);
        emit FindPoint(center);
 

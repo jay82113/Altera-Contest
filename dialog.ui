@@ -279,7 +279,6 @@
      <height>751</height>
     </rect>
    </property>
-   <zorder>label</zorder>
   </widget>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
@@ -472,6 +471,19 @@
     <string>Start</string>
    </property>
   </widget>
+  <widget class="QLabel" name="test_label">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>610</y>
+     <width>171</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
   <zorder>Back</zorder>
   <zorder>kg</zorder>
   <zorder>customPlot_2</zorder>
@@ -494,6 +506,7 @@
   <zorder>Heartrate</zorder>
   <zorder>Record_btn</zorder>
   <zorder>Record_Start_btn</zorder>
+  <zorder>test_label</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
